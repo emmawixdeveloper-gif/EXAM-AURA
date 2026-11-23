@@ -99,4 +99,566 @@ header {
 .question-number {
     color: #a78bfa;
     margin-bottom: 20px;
-   
+    font-size: 14px;
+}
+
+.question {
+    font-size: 21px;
+    line-height: 1.5;
+    margin-bottom: 28px;
+}
+
+.options {
+    display: grid;
+    gap: 13px;
+}
+
+.option {
+    padding: 17px;
+    background: #1a2339;
+    border: 1px solid #34415c;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.option:hover {
+    border-color: #a78bfa;
+}
+
+.option.selected {
+    background: #35245f;
+    border-color: #a78bfa;
+}
+
+.option.correct {
+    background: #14532d;
+    border-color: #22c55e;
+}
+
+.option.wrong {
+    background: #7f1d1d;
+    border-color: #ef4444;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+    padding: 13px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.previous {
+    background: #334155;
+    color: white;
+}
+
+.next {
+    background: #7c3aed;
+    color: white;
+}
+
+.submit {
+    background: #dc2626;
+    color: white;
+}
+
+.sidebar {
+    background: #11182b;
+    border: 1px solid #27314b;
+    border-radius: 14px;
+    padding: 20px;
+    height: fit-content;
+}
+
+.sidebar h3 {
+    margin-bottom: 20px;
+}
+
+.question-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 9px;
+}
+
+.question-grid button {
+    padding: 11px 5px;
+    background: #263149;
+    color: white;
+}
+
+.question-grid button.current {
+    background: #7c3aed;
+}
+
+.question-grid button.answered {
+    background: #166534;
+}
+
+.legend {
+    margin-top: 20px;
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 2;
+}
+
+#result {
+    display: none;
+    background: #11182b;
+    border: 1px solid #27314b;
+    padding: 35px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.score {
+    font-size: 55px;
+    color: #a78bfa;
+    margin: 20px 0;
+}
+
+.review {
+    text-align: left;
+    margin-top: 30px;
+}
+
+.review-item {
+    background: #1a2339;
+    padding: 18px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    line-height: 1.8;
+}
+
+footer {
+    text-align: center;
+    padding: 30px;
+    color: #64748b;
+}
+
+@media(max-width: 750px) {
+    .exam-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        order: 2;
+    }
+
+    .question {
+        font-size: 18px;
+    }
+
+    .question-box {
+        padding: 20px;
+    }
+
+    .controls {
+        flex-wrap: wrap;
+    }
+
+    .controls button {
+        flex: 1;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">EXAM <span>AURA.</span></div>
+    <div class="header-info">ONLINE EXAMINATION</div>
+</header>
+
+<div class="container">
+
+    <div id="exam">
+
+        <div class="exam-info">
+            <div>
+                <small>COURSE</small>
+                <h3>MTH 101</h3>
+            </div>
+
+            <div>
+                <small>QUESTIONS</small>
+                <h3 id="total">10</h3>
+            </div>
+
+            <div>
+                <small>TIME LEFT</small>
+                <h3 class="timer" id="timer">15:00</h3>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress" id="progress"></div>
+        </div>
+
+        <div class="exam-layout">
+
+            <div class="question-box">
+
+                <div class="question-number" id="number"></div>
+
+                <div class="question" id="question"></div>
+
+                <div class="options" id="options"></div>
+
+                <div class="controls">
+                    <button class="previous" onclick="previousQuestion()">
+                        ← Previous
+                    </button>
+
+                    <button class="next" onclick="nextQuestion()">
+                        Next →
+                    </button>
+
+                    <button class="submit" onclick="submitExam()">
+                        Submit
+                    </button>
+                </div>
+
+            </div>
+
+            <aside class="sidebar">
+
+                <h3>Question Navigator</h3>
+
+                <div class="question-grid" id="navigator"></div>
+
+                <div class="legend">
+                    🟣 Current question<br>
+                    🟢 Answered<br>
+                    ⚫ Not answered
+                </div>
+
+            </aside>
+
+        </div>
+
+    </div>
+
+    <div id="result">
+
+        <h2>EXAMINATION COMPLETED</h2>
+
+        <p>Your EXAM AURA results are ready.</p>
+
+        <div class="score" id="score"></div>
+
+        <h3 id="remark"></h3>
+
+        <p id="details"></p>
+
+        <div class="review">
+            <h3>Answer Review</h3>
+            <div id="review"></div>
+        </div>
+
+        <button class="next" onclick="location.reload()">
+            Take Another Test
+        </button>
+
+    </div>
+
+</div>
+
+<footer>
+    © 2026 EXAM AURA. All Rights Reserved.
+</footer>
+
+<script>
+
+const questions = [
+
+{
+q: "What is the value of 5 + 7 × 2?",
+o: ["24", "19", "17", "14"],
+a: 1,
+e: "Multiplication comes before addition. 7 × 2 + 5 = 19."
+},
+
+{
+q: "Which of the following is a prime number?",
+o: ["9", "15", "17", "21"],
+a: 2,
+e: "17 has only two factors: 1 and 17."
+},
+
+{
+q: "Solve: 2x + 6 = 14.",
+o: ["2", "3", "4", "5"],
+a: 2,
+e: "2x = 14 - 6 = 8. Therefore x = 4."
+},
+
+{
+q: "What is 25% of 200?",
+o: ["25", "40", "50", "75"],
+a: 2,
+e: "25/100 × 200 = 50."
+},
+
+{
+q: "Simplify: 3² + 4².",
+o: ["12", "25", "49", "14"],
+a: 1,
+e: "9 + 16 = 25."
+},
+
+{
+q: "What is the square root of 144?",
+o: ["10", "11", "12", "14"],
+a: 2,
+e: "12 × 12 = 144."
+},
+
+{
+q: "Evaluate: 15 ÷ 3 + 4.",
+o: ["9", "7", "5", "12"],
+a: 0,
+e: "15 ÷ 3 = 5. Then 5 + 4 = 9."
+},
+
+{
+q: "Express 0.5 as a fraction.",
+o: ["1/4", "1/2", "2/3", "3/4"],
+a: 1,
+e: "0.5 = 5/10 = 1/2."
+},
+
+{
+q: "What is the sum of the angles in a triangle?",
+o: ["90°", "180°", "270°", "360°"],
+a: 1,
+e: "The interior angles of a triangle sum to 180°."
+},
+
+{
+q: "If x = 3, find the value of 2x².",
+o: ["12", "18", "36", "9"],
+a: 1,
+e: "2 × 3² = 2 × 9 = 18."
+}
+
+];
+
+let current = 0;
+let answers = Array(questions.length).fill(null);
+let timeLeft = 15 * 60;
+let finished = false;
+
+function displayQuestion() {
+
+    const q = questions[current];
+
+    document.getElementById("number").textContent =
+        `QUESTION ${current + 1} OF ${questions.length}`;
+
+    document.getElementById("question").textContent = q.q;
+
+    document.getElementById("options").innerHTML = "";
+
+    q.o.forEach((option, index) => {
+
+        const button = document.createElement("div");
+
+        button.className = "option";
+
+        if (answers[current] === index) {
+            button.classList.add("selected");
+        }
+
+        button.textContent =
+            `${String.fromCharCode(65 + index)}. ${option}`;
+
+        button.onclick = () => {
+
+            answers[current] = index;
+
+            displayQuestion();
+
+        };
+
+        document.getElementById("options").appendChild(button);
+
+    });
+
+    document.getElementById("progress").style.width =
+        `${((current + 1) / questions.length) * 100}%`;
+
+    updateNavigator();
+
+}
+
+function updateNavigator() {
+
+    const nav = document.getElementById("navigator");
+
+    nav.innerHTML = "";
+
+    questions.forEach((q, index) => {
+
+        const button = document.createElement("button");
+
+        button.textContent = index + 1;
+
+        if (answers[index] !== null) {
+            button.classList.add("answered");
+        }
+
+        if (index === current) {
+            button.classList.add("current");
+        }
+
+        button.onclick = () => {
+
+            current = index;
+
+            displayQuestion();
+
+        };
+
+        nav.appendChild(button);
+
+    });
+
+}
+
+function nextQuestion() {
+
+    if (current < questions.length - 1) {
+        current++;
+        displayQuestion();
+    }
+
+}
+
+function previousQuestion() {
+
+    if (current > 0) {
+        current--;
+        displayQuestion();
+    }
+
+}
+
+function submitExam() {
+
+    if (finished) return;
+
+    const unanswered = answers.filter(a => a === null).length;
+
+    if (unanswered > 0 && timeLeft > 0) {
+
+        const confirmSubmit = confirm(
+            `You have ${unanswered} unanswered questions. Submit anyway?`
+        );
+
+        if (!confirmSubmit) return;
+
+    } else if (timeLeft > 0) {
+
+        if (!confirm("Are you sure you want to submit?")) return;
+
+    }
+
+    finished = true;
+
+    clearInterval(timer);
+
+    let correct = 0;
+
+    questions.forEach((q, index) => {
+
+        if (answers[index] === q.a) {
+            correct++;
+        }
+
+    });
+
+    const percentage = (correct / questions.length) * 100;
+
+    document.getElementById("exam").style.display = "none";
+
+    document.getElementById("result").style.display = "block";
+
+    document.getElementById("score").textContent =
+        `${correct}/${questions.length}`;
+
+    document.getElementById("remark").textContent =
+        percentage >= 70 ? "Excellent Performance!" :
+        percentage >= 50 ? "Good Effort!" :
+        "Keep Practising!";
+
+    document.getElementById("details").textContent =
+        `${percentage}% • ${questions.length - correct} incorrect answers`;
+
+    const review = document.getElementById("review");
+
+    questions.forEach((q, index) => {
+
+        const item = document.createElement("div");
+
+        item.className = "review-item";
+
+        const selected = answers[index] === null
+            ? "Not answered"
+            : `${String.fromCharCode(65 + answers[index])}. ${q.o[answers[index]]}`;
+
+        item.innerHTML = `
+            <strong>Question ${index + 1}: ${q.q}</strong><br>
+            Your answer: ${selected}<br>
+            Correct answer: ${String.fromCharCode(65 + q.a)}. ${q.o[q.a]}<br>
+            Explanation: ${q.e}
+        `;
+
+        review.appendChild(item);
+
+    });
+
+}
+
+function updateTimer() {
+
+    if (finished) return;
+
+    const minutes = Math.floor(timeLeft / 60);
+
+    const seconds = timeLeft % 60;
+
+    document.getElementById("timer").textContent =
+        `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+    if (timeLeft <= 0) {
+
+        submitExam();
+
+        return;
+
+    }
+
+    timeLeft--;
+
+}
+
+displayQuestion();
+
+updateTimer();
+
+const timer = setInterval(updateTimer, 1000);
+
+</script>
+
+</body>
+</html>
